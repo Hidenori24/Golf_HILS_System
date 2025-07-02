@@ -1,6 +1,3 @@
-#### ここから記述
-
-````
 # ゴルフHILSシステム設計書
 
 ## 1. 概要
@@ -19,7 +16,7 @@ Raspberry Pi（または同等の SBC）上で弾道シミュレータを動作�
 ```mermaid
 graph LR
   subgraph Sensor Unit
-    MS[M5Stack Core2<br/>- IMU (加速度・角速度)<br/>- ボタン入力]
+    MS["M5Stack Core2<br/>- IMU (加速度・角速度)<br/>- ボタン入力"]
   end
 
   subgraph Network
@@ -28,7 +25,7 @@ graph LR
   end
 
   subgraph Simulator Unit
-    RPI[Raspberry Pi<br/>- 弾道計算 (Python/TS)<br/>- GUI (Flask/React)]
+    RPI["Raspberry Pi<br/>- 弾道計算 (Python/TS)<br/>- GUI (Flask/React)"]
     DB[(SQLite/CSV)]
     UI[Web UI<br/>- ブラウザ表示]
   end
@@ -152,7 +149,7 @@ flowchart TD
     IMU[MPU6886 IMU]
     BTN[ボタン×3]
     MCU[M5Core2 MCU]
-    PWR[電源 (LiPo/Mobile Battery)]
+    PWR["電源 (LiPo/Mobile Battery)"]
     IMU --> MCU
     BTN --> MCU
     PWR --> MCU
@@ -257,4 +254,3 @@ flowchart TD
   - センサ側 → ビルド & ユニットテスト  
   - 処理側 → Lint（flake8 or ESLint） & ユニットテスト  
 - **リリース**：GitHub Releases + Docker イメージ公開  
-````
