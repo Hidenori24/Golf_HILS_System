@@ -1,41 +1,84 @@
-# Prerequisites
+# C/C++ compiled files
 *.d
-
-# Compiled Object files
 *.slo
 *.lo
 *.o
 *.obj
-
-# Precompiled Headers
 *.gch
 *.pch
-
-# Linker files
 *.ilk
-
-# Debugger Files
 *.pdb
-
-# Compiled Dynamic libraries
 *.so
 *.dylib
 *.dll
-
-# Fortran module files
 *.mod
 *.smod
-
-# Compiled Static libraries
 *.lai
 *.la
 *.a
 *.lib
-
-# Executables
 *.exe
 *.out
 *.app
-
-# debug information files
 *.dwo
+
+# PlatformIO build files
+sensor-firmware/.pio/
+sensor-firmware/build/
+sensor-firmware/.vscode/
+
+# Python files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.python-version
+
+# Virtual environments
+simulator-py/venv/
+simulator-py/env/
+.env
+.venv
+
+# Database files
+*.db
+*.sqlite3
+
+# Log files
+*.log
+logs/
+
+# Generated data and exports
+simulator-py/data/exports/
+simulator-py/trajectories/
+*.csv
+*.png
+*.jpg
+*.jpeg
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Documentation build
+docs/_build/
+docs/html/
+
+# Configuration files with secrets
+sensor-firmware/config/*_config.env
+simulator-py/config/*_config.yaml
+!sensor-firmware/config/sensor_config.env
+!simulator-py/config/simulator_config.yaml

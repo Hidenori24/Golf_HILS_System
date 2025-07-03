@@ -1,0 +1,36 @@
+# Golf HILS Simulator - Python Dependencies
+# Install with: pip install -r requirements.txt
+
+# Core scientific computing
+numpy>=1.21.0
+scipy>=1.7.0
+matplotlib>=3.5.0
+
+# Data handling and storage
+pandas>=1.3.0
+sqlite3   # Built-in with Python
+
+# Serial communication
+pyserial>=3.5
+
+# Display and GUI
+pygame>=2.1.0
+Pillow>=8.3.0
+
+# MQTT communication (optional)
+paho-mqtt>=1.6.0
+
+# Configuration management
+PyYAML>=6.0
+
+# Logging and utilities
+colorlog>=6.0.0
+
+# Testing (optional)
+pytest>=6.2.0
+pytest-cov>=2.12.0
+
+# Development tools (optional)
+black>=21.0.0
+flake8>=4.0.0
+isort>=5.9.0
