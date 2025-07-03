@@ -1,76 +1,76 @@
-# Golf HILS System Build Instructions
+# ゴルフHILSシステム ビルド手順書
 
-## Overview
-This document provides build and setup instructions for both the sensor firmware and simulation software components of the Golf HILS System.
-
----
-
-## Prerequisites
-
-### Hardware Requirements
-- **Sensor Unit**: M5StickC Plus2
-- **Simulation Unit**: Raspberry Pi 4 Model B (4GB RAM recommended)
-- **Display**: HDMI-compatible monitor/TV
-- **Connection**: USB-C to USB-A cable
-
-### Software Requirements
-- **Development Environment**: PlatformIO or Arduino IDE
-- **Operating System**: Raspberry Pi OS (64-bit recommended)
-- **Python**: 3.9 or later
+## 概要
+このドキュメントは、ゴルフHILSシステムのセンサーファームウェアとシミュレーションソフトウェアの両方のビルドとセットアップ手順を提供します。
 
 ---
 
-## Sensor Firmware Build
+## 前提条件
 
-### Method 1: Using PlatformIO (Recommended)
+### ハードウェア要件
+- **センサーユニット**: M5StickC Plus2
+- **シミュレーションユニット**: Raspberry Pi 4 Model B (4GB RAM推奨)
+- **ディスプレイ**: HDMI対応モニター/TV
+- **接続**: USB-C to USB-Aケーブル
 
-1. **Install PlatformIO**
+### ソフトウェア要件
+- **開発環境**: PlatformIO または Arduino IDE
+- **オペレーティングシステム**: Raspberry Pi OS (64bit推奨)
+- **Python**: 3.9以降
+
+---
+
+## センサーファームウェアのビルド
+
+### 方法1: PlatformIOを使用 (推奨)
+
+1. **PlatformIOのインストール**
    ```bash
-   # Install PlatformIO Core
+   # PlatformIO Coreのインストール
    pip install platformio
    
-   # Or use VS Code extension
-   # Install "PlatformIO IDE" extension in VS Code
+   # またはVS Code拡張機能を使用
+   # VS Codeで"PlatformIO IDE"拡張機能をインストール
    ```
 
-2. **Build and Upload**
+2. **ビルドとアップロード**
    ```bash
    cd sensor-firmware/
    
-   # Build firmware
+   # ファームウェアのビルド
    pio run
    
-   # Upload to M5StickC Plus2 (connect via USB-C)
+   # M5StickC Plus2へのアップロード (USB-C接続)
    pio run --target upload
    
-   # Monitor serial output
+   # シリアル出力の監視
    pio device monitor
    ```
 
-### Method 2: Using Arduino IDE
+### 方法2: Arduino IDEを使用
 
-1. **Setup Arduino IDE**
-   - Install Arduino IDE 2.0 or later
-   - Add ESP32 board support:
-     - Go to File → Preferences
-     - Add to Additional Board Manager URLs:
+1. **Arduino IDEのセットアップ**
+   - Arduino IDE 2.0以降をインストール
+   - ESP32ボードサポートを追加:
+     - ファイル → 環境設定
+     - 追加のボードマネージャーのURLに追加:
        `https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json`
-   - Install ESP32 boards via Tools → Board → Boards Manager
+   - ツール → ボード → ボードマネージャーでESP32ボードをインストール
 
-2. **Install Libraries**
-   - M5StickCPlus2 library
-   - ArduinoJson library
-   - PubSubClient library
+2. **ライブラリのインストール**
+   - M5StickCPlus2ライブラリ
+   - ArduinoJsonライブラリ
+   - PubSubClientライブラリ
 
-3. **Compile and Upload**
-   - Open `examples/golf_swing_monitor.ino`
-   - Select Board: "M5Stick-C"
-   - Select Port: Your device port
-   - Click Upload
+3. **コンパイルとアップロード**
+   - `examples/golf_swing_monitor.ino`を開く
+   - ボード選択: "M5Stick-C"
+   - ポート選択: デバイスポート
+   - アップロードをクリック
 
-### Configuration
+### 設定
 
-Edit the configuration in the main sketch:
+メインスケッチの設定を編集:
 ```cpp
 const char* WIFI_SSID = "YOUR_WIFI_SSID";
 const char* WIFI_PASSWORD = "YOUR_WIFI_PASSWORD";
@@ -79,45 +79,45 @@ const char* MQTT_BROKER = "192.168.1.100";
 
 ---
 
-## Simulation Software Setup
+## シミュレーションソフトウェアのセットアップ
 
-### Raspberry Pi Setup
+### Raspberry Piのセットアップ
 
-1. **Automated Setup (Recommended)**
+1. **自動セットアップ (推奨)**
    ```bash
    cd simulator-py/
    chmod +x setup_raspberry_pi.sh
    ./setup_raspberry_pi.sh
    ```
 
-2. **Manual Setup**
+2. **手動セットアップ**
    ```bash
-   # Update system
+   # システムの更新
    sudo apt update && sudo apt upgrade -y
    
-   # Install dependencies
+   # 依存関係のインストール
    sudo apt install -y python3 python3-pip python3-venv
    sudo apt install -y python3-numpy python3-scipy python3-matplotlib
    sudo apt install -y python3-pygame python3-serial sqlite3
    
-   # Create virtual environment
+   # 仮想環境の作成
    cd simulator-py/
    python3 -m venv venv
    source venv/bin/activate
    
-   # Install Python packages
+   # Pythonパッケージのインストール
    pip install -r requirements.txt
    
-   # Setup directories
+   # ディレクトリの作成
    mkdir -p data/exports trajectories logs
    
-   # Add user to dialout group for serial access
+   # シリアルアクセス用にユーザーをdialoutグループに追加
    sudo usermod -a -G dialout $USER
    ```
 
-### Development Environment Setup
+### 開発環境のセットアップ
 
-For development on other platforms:
+他のプラットフォームでの開発用:
 
 **Ubuntu/Debian:**
 ```bash
@@ -147,54 +147,54 @@ pip install -r requirements.txt
 
 ---
 
-## Running the System
+## システムの実行
 
-### Start Simulation Software
+### シミュレーションソフトウェアの開始
 
 ```bash
 cd simulator-py/
 source venv/bin/activate  # Linux/macOS
-# or
+# または
 venv\Scripts\activate     # Windows
 
-# Run with default settings
+# デフォルト設定で実行
 python main.py
 
-# Run with custom settings
+# カスタム設定で実行
 python main.py --port /dev/ttyUSB0 --baud 115200 --display live
 
-# Run in headless mode
+# ヘッドレスモードで実行
 python main.py --display headless
 ```
 
-### Command Line Options
+### コマンドラインオプション
 
 ```
---port PORT         Serial port (default: /dev/ttyUSB0)
---baud BAUD         Baud rate (default: 115200)
---display MODE      Display mode: live, headless, both (default: live)
---log-level LEVEL   Logging level: DEBUG, INFO, WARNING, ERROR (default: INFO)
+--port PORT         シリアルポート (デフォルト: /dev/ttyUSB0)
+--baud BAUD         ボーレート (デフォルト: 115200)
+--display MODE      表示モード: live, headless, both (デフォルト: live)
+--log-level LEVEL   ログレベル: DEBUG, INFO, WARNING, ERROR (デフォルト: INFO)
 ```
 
-### Start Sensor Unit
+### センサーユニットの開始
 
-1. Power on M5StickC Plus2 (hold C button for 2 seconds)
-2. The device will show "Golf HILS Sensor" and initialization status
-3. Use A button to select club, B button to select player
-4. Take a golf swing to generate data
+1. M5StickC Plus2の電源を入れる (Cボタンを2秒間長押し)
+2. デバイスに「Golf HILS Sensor」と初期化状況が表示される
+3. Aボタンでクラブ選択、Bボタンでプレイヤー選択
+4. ゴルフスイングを行ってデータを生成
 
 ---
 
-## Testing
+## テスト
 
-### Sensor Firmware Testing
+### センサーファームウェアのテスト
 
 ```bash
 cd sensor-firmware/
 pio test
 ```
 
-### Simulation Software Testing
+### シミュレーションソフトウェアのテスト
 
 ```bash
 cd simulator-py/
@@ -202,18 +202,18 @@ source venv/bin/activate
 pytest tests/ -v
 ```
 
-### Integration Testing
+### 統合テスト
 
-1. Start simulation software
-2. Connect sensor unit via USB
-3. Take test swings
-4. Verify data reception and trajectory calculation
+1. シミュレーションソフトウェアを開始
+2. センサーユニットをUSB接続
+3. テストスイングを実行
+4. データ受信と弾道計算を確認
 
 ---
 
-## Example Usage
+## 使用例
 
-### Trajectory Analysis Example
+### 弾道解析の例
 
 ```bash
 cd simulator-py/
@@ -221,20 +221,20 @@ source venv/bin/activate
 python examples/trajectory_analysis_example.py
 ```
 
-This will:
-- Generate sample swing data
-- Analyze multiple club types
-- Create trajectory visualizations
-- Store results in database
-- Export data to CSV
+これにより以下が実行されます:
+- サンプルスイングデータの生成
+- 複数のクラブタイプの解析
+- 弾道可視化の作成
+- データベースへの結果保存
+- CSVへのデータエクスポート
 
 ---
 
-## Configuration
+## 設定
 
-### Sensor Configuration
+### センサー設定
 
-Edit `sensor-firmware/config/sensor_config.env`:
+`sensor-firmware/config/sensor_config.env`を編集:
 ```bash
 WIFI_SSID=YOUR_NETWORK
 WIFI_PASSWORD=YOUR_PASSWORD
@@ -242,9 +242,9 @@ MQTT_BROKER_IP=192.168.1.100
 SWING_DETECTION_THRESHOLD=2.0
 ```
 
-### Simulator Configuration
+### シミュレーター設定
 
-Edit `simulator-py/config/simulator_config.yaml`:
+`simulator-py/config/simulator_config.yaml`を編集:
 ```yaml
 serial:
   port: "/dev/ttyUSB0"
@@ -260,108 +260,108 @@ database:
 
 ---
 
-## Troubleshooting
+## トラブルシューティング
 
-### Common Issues
+### よくある問題
 
-**Serial Port Access Denied:**
+**シリアルポートアクセス拒否:**
 ```bash
 sudo usermod -a -G dialout $USER
-# Then logout and login again
+# その後ログアウト・ログインを再実行
 ```
 
-**M5StickC Plus2 Not Detected:**
-- Check USB cable (data capable, not just charging)
-- Press reset button on M5StickC Plus2
-- Try different USB port
+**M5StickC Plus2が検出されない:**
+- USBケーブルを確認 (データ転送対応、充電専用でない)
+- M5StickC Plus2のリセットボタンを押す
+- 別のUSBポートを試す
 
-**Display Issues on Raspberry Pi:**
+**Raspberry Piでの表示問題:**
 ```bash
-# Enable GPU memory split
+# GPUメモリ分割を有効化
 sudo raspi-config
 # Advanced Options → Memory Split → 128
 ```
 
-**Python Package Installation Errors:**
+**Pythonパッケージインストールエラー:**
 ```bash
-# Update pip
+# pipの更新
 pip install --upgrade pip
 
-# Install build dependencies
+# ビルド依存関係のインストール
 sudo apt install python3-dev build-essential
 ```
 
-### Performance Optimization
+### パフォーマンス最適化
 
-**For Raspberry Pi:**
+**Raspberry Pi用:**
 ```bash
-# Increase GPU memory
+# GPUメモリの増加
 echo "gpu_mem=128" | sudo tee -a /boot/config.txt
 
-# Disable unnecessary services
+# 不要なサービスの無効化
 sudo systemctl disable bluetooth
 sudo systemctl disable avahi-daemon
 ```
 
 ---
 
-## System Service (Optional)
+## システムサービス (オプション)
 
-To run the simulator as a system service:
+シミュレーターをシステムサービスとして実行するには:
 
 ```bash
-# Enable service
+# サービスの有効化
 sudo systemctl enable golf-hils.service
 
-# Start service
+# サービスの開始
 sudo systemctl start golf-hils.service
 
-# Check status
+# ステータス確認
 sudo systemctl status golf-hils.service
 
-# View logs
+# ログの表示
 sudo journalctl -u golf-hils.service -f
 ```
 
 ---
 
-## Development Workflow
+## 開発ワークフロー
 
-### Sensor Firmware Development
+### センサーファームウェア開発
 
-1. Make changes to source code
-2. Build and test locally:
+1. ソースコードを変更
+2. ローカルでビルド・テスト:
    ```bash
    pio run
    pio test
    ```
-3. Upload to device:
+3. デバイスにアップロード:
    ```bash
    pio run --target upload
    ```
-4. Monitor serial output:
+4. シリアル出力を監視:
    ```bash
    pio device monitor
    ```
 
-### Simulation Software Development
+### シミュレーションソフトウェア開発
 
-1. Make changes to Python code
-2. Run tests:
+1. Pythonコードを変更
+2. テストを実行:
    ```bash
    pytest tests/ -v
    ```
-3. Test with example data:
+3. サンプルデータでテスト:
    ```bash
    python examples/trajectory_analysis_example.py
    ```
-4. Test full system integration
+4. フルシステム統合テスト
 
 ---
 
-## Documentation Generation
+## ドキュメント生成
 
-### API Documentation
+### APIドキュメント
 
 ```bash
 cd simulator-py/
@@ -371,18 +371,18 @@ sphinx-quickstart docs/
 sphinx-build -b html docs/ docs/_build/
 ```
 
-### Code Documentation
+### コードドキュメント
 
 ```bash
-# Generate firmware documentation
+# ファームウェアドキュメント生成
 cd sensor-firmware/
 doxygen Doxyfile
 
-# Generate Python documentation
+# Pythonドキュメント生成
 cd simulator-py/
 pdoc --html . --output-dir docs/
 ```
 
 ---
 
-For additional support and updates, check the project repository README and issues section.
+追加のサポートとアップデートについては、プロジェクトリポジトリのREADMEとissuesセクションを確認してください。
