@@ -4,6 +4,14 @@
 
 ---
 
+## クイックスタート・データ取得例
+
+- `src/wifi_config.h` でWiFiのSSID・パスワードを設定してください。
+- ファームウェア書き込み後、同一ネットワークのPCやスマホから `http://esp32.local/imu_log.csv` にアクセスすると、IMUデータのCSVファイルがダウンロードできます。
+- サンプルCSVファイルは `examples/data/imu_log_sample.csv` に配置しています。
+
+---
+
 ## 概要
 
 - **役割**  
@@ -47,12 +55,6 @@ struct SwingData {
     float accel_x, accel_y, accel_z;
     float gyro_x, gyro_y, gyro_z;
     uint8_t club_type; // 0=Driver, 1=Iron, ...
-};
-void sendSwing(const SwingData& d) {
-    StaticJsonDocument<128> doc;
-    doc["ax"] = d.accel_x;
-    doc["ay"] = d.accel_y;
-    doc["az"] = d.accel_z;
     doc["gx"] = d.gyro_x;
     doc["gy"] = d.gyro_y;
     doc["gz"] = d.gyro_z;
@@ -61,6 +63,23 @@ void sendSwing(const SwingData& d) {
     Serial.println();
 }
 ```
+
+## クイックスタート・データ取得例
+
+1. `src/wifi_config.h` でWiFiのSSID・パスワードを設定してください。
+2. ファームウェア書き込み後、同一ネットワークのPCやスマホから `http://esp32.local/imu_log.csv` にアクセスすると、IMUデータのCSVファイルがダウンロードできます。
+3. サンプルCSVファイルは `examples/data/imu_log_sample.csv` に配置しています。
+
+---
+
+## 主な変更点・追加機能（2025/07時点）
+
+- IMU（MPU6886）データをCSV形式でSPIFFSに保存（`/imu_log.csv`）
+- Webサーバ機能を内蔵し、ブラウザからCSVファイルをダウンロード可能（`http://esp32.local/imu_log.csv`）
+- WiFi設定を `src/wifi_config.h` で分離管理
+- CSVファイルの1行目にカラム名（ヘッダ）を自動付与
+- 起動時にCSVファイルを毎回初期化（前回データは消去されます）
+- サンプルCSVを `examples/data/imu_log_sample.csv` に同梱
 
 ---
 
