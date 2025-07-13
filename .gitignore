@@ -56,7 +56,7 @@ logs/
 # Generated data and exports
 simulator-py/data/exports/
 simulator-py/trajectories/
-*.csv
+# *.csv
 *.png
 *.jpg
 *.jpeg
