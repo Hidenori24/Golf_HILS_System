@@ -81,6 +81,11 @@ struct SwingData {
 - 起動時にCSVファイルを毎回初期化（前回データは消去されます）
 - サンプルCSVを `examples/data/imu_log_sample.csv` に同梱
 
+### csv データの画像を一部表示。
+<img width="2087" height="1125" alt="image" src="https://github.com/user-attachments/assets/c60f89cf-e409-4d7a-8812-7a1352db5df2" />
+
+<img width="1755" height="995" alt="image" src="https://github.com/user-attachments/assets/8fb5f710-09b8-4313-b842-e9b5194acd3e" />
+
 ---
 
 ## 技術スタック
