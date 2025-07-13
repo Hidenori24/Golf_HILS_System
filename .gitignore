@@ -82,3 +82,4 @@ sensor-firmware/config/*_config.env
 simulator-py/config/*_config.yaml
 !sensor-firmware/config/sensor_config.env
 !simulator-py/config/simulator_config.yaml
+sensor-firmware/src/wifi_config.h

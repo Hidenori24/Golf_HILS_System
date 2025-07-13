@@ -14,8 +14,17 @@ WebServer server(80);
 
 // CSV保存関数
 void saveIMUDataToCSV(const SwingData& data) {
+    bool writeHeader = !SPIFFS.exists("/imu_log.csv");
     File file = SPIFFS.open("/imu_log.csv", FILE_APPEND);
-    if (!file) return;
+    if (!file) {
+        M5.Lcd.setCursor(10, 50);
+        M5.Lcd.setTextColor(RED, BLACK);
+        M5.Lcd.println("CSV open failed!");
+        return;
+    }
+    if (writeHeader) {
+        file.println("timestamp,accel_x,accel_y,accel_z,gyro_x,gyro_y,gyro_z");
+    }
     file.printf("%lu,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f\n",
         data.timestamp, data.accel_x, data.accel_y, data.accel_z,
         data.gyro_x, data.gyro_y, data.gyro_z);
@@ -66,9 +75,14 @@ void setup() {
     M5.Lcd.setTextColor(WHITE, BLACK);
     M5.Lcd.setTextSize(1);
 
-    if (!SPIFFS.begin(true)) {
+    if (!SPIFFS.begin(true)) { // trueで自動フォーマット
         M5.Lcd.println("SPIFFS Init Failed!");
         while(1) delay(1000);
+    }
+
+    // 起動時にCSVファイルを削除（毎回新規作成）
+    if (SPIFFS.exists("/imu_log.csv")) {
+        SPIFFS.remove("/imu_log.csv");
     }
 
     if (!imu_sensor.initialize()) {
