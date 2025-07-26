@@ -75,6 +75,20 @@ void IMUDataAcquisition::calibrateIMU() {
     gyro_offset_z = sum_gz / samples;
 }
 
+/**
+ * ボタン操作・画面遷移・機能一覧
+ *
+ * Aボタン短押し：画面モード切替（通常グラフ → 2次元加速度グラフ → 2次元変位グラフ → ...）
+ * Bボタン短押し：2次元グラフ表示時、軸切替（xy → yz → xz → ...）
+ * Bボタン長押し（1秒以上）：
+ *   - 通常グラフ時：キャリブレーション（静止状態でオフセット再取得）
+ *   - 変位グラフ時：変位リセット（速度・位置を0に戻す）
+ *
+ * 各画面の表示内容：
+ *   - 通常グラフ：加速度グラフ（3軸）
+ *   - 2次元加速度グラフ：xy/yz/xzの2軸加速度を中心±で表示
+ *   - 2次元変位グラフ：xy/yz/xzの2軸変位を中心±で表示
+ */
 SwingData IMUDataAcquisition::readSwingData() {
     SwingData data;
 
@@ -88,7 +102,13 @@ SwingData IMUDataAcquisition::readSwingData() {
         axis_mode = (axis_mode + 1) % 3; // xy→yz→xz→xy
         displayManager->clear();
     }
-    // Bボタン長押し（1000ms以上）で変位リセット
+    // 通常表示時にB長押しでキャリブレーション
+    if (display_mode == 0 && M5.BtnB.pressedFor(1000)) {
+        calibrateIMU();
+        displayManager->clear();
+        displayManager->showMessage("Calibrated!");
+    }
+    // 変位グラフ時にB長押しで変位リセット
     if (display_mode == 2 && M5.BtnB.pressedFor(1000)) {
         resetPosition();
         displayManager->clear();
@@ -117,6 +137,19 @@ SwingData IMUDataAcquisition::readSwingData() {
     pos_x += vel_x * dt;
     pos_y += vel_y * dt;
     pos_z += vel_z * dt;
+
+    // --- 画面モード名・操作説明表示 ---
+    M5.Lcd.setTextColor(WHITE, BLACK);
+    M5.Lcd.setTextSize(1);
+    M5.Lcd.setCursor(0, 0);
+    const char* modeStr = "";
+    if (display_mode == 0) modeStr = "通常グラフ";
+    else if (display_mode == 1) modeStr = "加速度2次元";
+    else modeStr = "変位2次元";
+    M5.Lcd.printf("[MODE] %s", modeStr);
+
+    M5.Lcd.setCursor(0, 150);
+    M5.Lcd.printf("A:画面切替  B:軸切替  B長押:リセット/キャリブ");
 
     if (display_mode == 0) {
         // 通常グラフ
