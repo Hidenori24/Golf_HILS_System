@@ -19,7 +19,8 @@ private:
     // Calibration offsets
     float accel_offset_x, accel_offset_y, accel_offset_z;
     float gyro_offset_x, gyro_offset_y, gyro_offset_z;
-    int display_mode; // 画面表示モード 0:通常, 1:スイッチ押下
+    int display_mode; // 画面表示モード 0:通常, 1:2次元グラフ
+    int axis_mode;    // 0:xy, 1:yz, 2:xz
     DisplayManager* displayManager;
     
     void calibrateIMU();

@@ -57,6 +57,67 @@ void DisplayManager::showMessage(const std::string& msg) {
     M5.Lcd.setTextColor(WHITE, BLACK);
 }
 
+// axis_mode: 0=xy, 1=yz, 2=xz
+void DisplayManager::showAccel2DGraph(float ax, float ay, float az, int axis_mode) {
+    int cx = 120, cy = 80; // 画面中心（中央付近）
+    int scale = 40; // 拡大倍率
+    int gx, gy;
+    uint16_t color = RED;
+    float z_centered = az - 1.0; // z軸は重力分補正
+    switch(axis_mode) {
+        case 0: // xy
+            gx = cx + (int)(ax * scale);
+            gy = cy - (int)(ay * scale);
+            color = GREEN;
+            break;
+        case 1: // yz
+            gx = cx + (int)(ay * scale);
+            gy = cy - (int)(z_centered * scale);
+            color = BLUE;
+            break;
+        case 2: // xz
+            gx = cx + (int)(ax * scale);
+            gy = cy - (int)(z_centered * scale);
+            color = YELLOW;
+            break;
+    }
+    // 背景・軸描画
+    M5.Lcd.fillRect(cx-60, cy-60, 120, 120, BLACK);
+    M5.Lcd.drawLine(cx-60, cy, cx+60, cy, WHITE); // x軸
+    M5.Lcd.drawLine(cx, cy-60, cx, cy+60, WHITE); // y軸
+    // 軸ラベル
+    M5.Lcd.setTextColor(WHITE, BLACK);
+    switch(axis_mode) {
+        case 0:
+            M5.Lcd.setCursor(cx+65, cy-10); M5.Lcd.print("X");
+            M5.Lcd.setCursor(cx-10, cy-65); M5.Lcd.print("Y");
+            break;
+        case 1:
+            M5.Lcd.setCursor(cx+65, cy-10); M5.Lcd.print("Y");
+            M5.Lcd.setCursor(cx-10, cy-65); M5.Lcd.print("Z");
+            break;
+        case 2:
+            M5.Lcd.setCursor(cx+65, cy-10); M5.Lcd.print("X");
+            M5.Lcd.setCursor(cx-10, cy-65); M5.Lcd.print("Z");
+            break;
+    }
+    // 点描画
+    M5.Lcd.fillCircle(gx, gy, 4, color);
+    // 数値表示
+    M5.Lcd.setCursor(10, 10);
+    switch(axis_mode) {
+        case 0:
+            M5.Lcd.printf("Accel XY: x=%.2f y=%.2f", ax, ay);
+            break;
+        case 1:
+            M5.Lcd.printf("Accel YZ: y=%.2f z=%.2f", ay, z_centered);
+            break;
+        case 2:
+            M5.Lcd.printf("Accel XZ: x=%.2f z=%.2f", ax, z_centered);
+            break;
+    }
+}
+
 void DisplayManager::clear() {
     M5.Lcd.fillScreen(BLACK);
 }

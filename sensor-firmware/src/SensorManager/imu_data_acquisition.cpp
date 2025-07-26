@@ -22,7 +22,8 @@ IMUDataAcquisition::IMUDataAcquisition() {
     gyro_offset_x = 0.0;
     gyro_offset_y = 0.0;
     gyro_offset_z = 0.0;
-    display_mode = 0; // 0: 通常表示, 1: スイッチ押下表示
+    display_mode = 0; // 0: 通常表示, 1: 2次元グラフ表示
+    axis_mode = 0; // 0:xy, 1:yz, 2:xz
     displayManager = new DisplayManager();
 }
 
@@ -70,40 +71,35 @@ void IMUDataAcquisition::calibrateIMU() {
 SwingData IMUDataAcquisition::readSwingData() {
     SwingData data;
 
-    // スイッチ押下検知（Aボタン）
+    // スイッチ押下検知（A/Bボタン）
     M5.update();
     if (M5.BtnA.wasPressed()) {
-        display_mode = (display_mode + 1) % 2; // 0と1を切り替え
+        display_mode = (display_mode + 1) % 2; // 0:通常, 1:2次元グラフ
+        displayManager->clear();
+    }
+    if (display_mode == 1 && M5.BtnB.wasPressed()) {
+        axis_mode = (axis_mode + 1) % 3; // xy→yz→xz→xy
         displayManager->clear();
     }
 
+    float ax, ay, az, gx, gy, gz;
+    M5.Imu.getAccelData(&ax, &ay, &az);
+    M5.Imu.getGyroData(&gx, &gy, &gz);
+
+    data.accel_x = ax - accel_offset_x;
+    data.accel_y = ay - accel_offset_y;
+    data.accel_z = az - accel_offset_z;
+    data.gyro_x = gx - gyro_offset_x;
+    data.gyro_y = gy - gyro_offset_y;
+    data.gyro_z = gz - gyro_offset_z;
+    data.timestamp = millis();
+
     if (display_mode == 0) {
-        float ax, ay, az, gx, gy, gz;
-        M5.Imu.getAccelData(&ax, &ay, &az);
-        M5.Imu.getGyroData(&gx, &gy, &gz);
-
-        data.accel_x = ax - accel_offset_x;
-        data.accel_y = ay - accel_offset_y;
-        data.accel_z = az - accel_offset_z;
-        data.gyro_x = gx - gyro_offset_x;
-        data.gyro_y = gy - gyro_offset_y;
-        data.gyro_z = gz - gyro_offset_z;
-
-        data.timestamp = millis();
-
-        // 表示はDisplayManagerに委譲
+        // 通常グラフ
         displayManager->showSwingGraph(data.accel_x, data.accel_y, data.accel_z);
     } else {
-        // スイッチ押下時の画面
-        displayManager->showMessage("Switch Pressed!");
-        // データは0で返す
-        data.accel_x = 0;
-        data.accel_y = 0;
-        data.accel_z = 0;
-        data.gyro_x = 0;
-        data.gyro_y = 0;
-        data.gyro_z = 0;
-        data.timestamp = millis();
+        // 2次元加速度グラフ
+        displayManager->showAccel2DGraph(data.accel_x, data.accel_y, data.accel_z, axis_mode);
     }
 
     return data;
