@@ -22,14 +22,6 @@ private:
     int display_mode; // 画面表示モード 0:通常, 1:2次元グラフ, 2:変位グラフ
     int axis_mode;    // 0:xy, 1:yz, 2:xz
     DisplayManager* displayManager;
-
-    // 速度・変位（各軸）
-    float vel_x, vel_y, vel_z;
-    float pos_x, pos_y, pos_z;
-    unsigned long prev_time;
-
-    void resetPosition();
-    
     void calibrateIMU();
 
 public:

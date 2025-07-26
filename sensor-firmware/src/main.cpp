@@ -145,7 +145,8 @@ void setup()
 void loop()
 {
     SwingData data = imu_sensor.readSwingData();
-    saveIMUDataToCSV(data);
+    // CSV保存を無効化（パフォーマンス向上のため）
+    // saveIMUDataToCSV(data);
     server.handleClient();
     delay(20);
 }
