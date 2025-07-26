@@ -13,6 +13,7 @@ public:
     void showSwingGraph(float ax, float ay, float az);
     void showMessage(const std::string& msg);
     void showAccel2DGraph(float ax, float ay, float az, int axis_mode);
+    void showDisplacement2DGraph(float px, float py, float pz, int axis_mode);
     void clear();
 private:
     int x;

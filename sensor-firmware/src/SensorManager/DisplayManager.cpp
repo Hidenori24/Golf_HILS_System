@@ -1,4 +1,105 @@
+// 変位2次元グラフ描画
 #include "DisplayManager.h"
+#include <M5Unified.h>
+#ifndef RED
+#define RED     0xF800
+#endif
+#ifndef GREEN
+#define GREEN   0x07E0
+#endif
+#ifndef BLUE
+#define BLUE    0x001F
+#endif
+#ifndef YELLOW
+#define YELLOW  0xFFE0
+#endif
+#ifndef WHITE
+#define WHITE   0xFFFF
+#endif
+#ifndef BLACK
+#define BLACK   0x0000
+#endif
+
+void DisplayManager::showDisplacement2DGraph(float px, float py, float pz, int axis_mode) {
+    int cx = 120, cy = 80; // 画面中心
+    int scale = 40; // 拡大倍率（調整可）
+    int gx, gy;
+    uint16_t color = RED;
+    switch(axis_mode) {
+        case 0: // xy
+            gx = cx + (int)(px * scale);
+            gy = cy - (int)(py * scale);
+            color = GREEN;
+            break;
+        case 1: // yz
+            gx = cx + (int)(py * scale);
+            gy = cy - (int)(pz * scale);
+            color = BLUE;
+            break;
+        case 2: // xz
+            gx = cx + (int)(px * scale);
+            gy = cy - (int)(pz * scale);
+            color = YELLOW;
+            break;
+    }
+    // 背景・軸描画
+    M5.Lcd.fillRect(cx-60, cy-60, 120, 120, BLACK);
+    M5.Lcd.drawLine(cx-60, cy, cx+60, cy, WHITE); // x軸
+    M5.Lcd.drawLine(cx, cy-60, cx, cy+60, WHITE); // y軸
+    // 軸ラベル
+    M5.Lcd.setTextColor(WHITE, BLACK);
+    switch(axis_mode) {
+        case 0:
+            M5.Lcd.setCursor(cx+65, cy-10); M5.Lcd.print("X");
+            M5.Lcd.setCursor(cx-10, cy-65); M5.Lcd.print("Y");
+            break;
+        case 1:
+            M5.Lcd.setCursor(cx+65, cy-10); M5.Lcd.print("Y");
+            M5.Lcd.setCursor(cx-10, cy-65); M5.Lcd.print("Z");
+            break;
+        case 2:
+            M5.Lcd.setCursor(cx+65, cy-10); M5.Lcd.print("X");
+            M5.Lcd.setCursor(cx-10, cy-65); M5.Lcd.print("Z");
+            break;
+    }
+    // 点描画
+    M5.Lcd.fillCircle(gx, gy, 4, color);
+    // 数値表示
+    M5.Lcd.setCursor(10, 10);
+    switch(axis_mode) {
+        case 0:
+            M5.Lcd.printf("Disp XY: x=%.2f y=%.2f", px, py);
+            break;
+        case 1:
+            M5.Lcd.printf("Disp YZ: y=%.2f z=%.2f", py, pz);
+            break;
+        case 2:
+            M5.Lcd.printf("Disp XZ: x=%.2f z=%.2f", px, pz);
+            break;
+    }
+}
+
+#include "DisplayManager.h"
+#include <M5Unified.h>
+
+#ifndef RED
+#define RED     0xF800
+#endif
+#ifndef GREEN
+#define GREEN   0x07E0
+#endif
+#ifndef BLUE
+#define BLUE    0x001F
+#endif
+#ifndef YELLOW
+#define YELLOW  0xFFE0
+#endif
+#ifndef WHITE
+#define WHITE   0xFFFF
+#endif
+#ifndef BLACK
+#define BLACK   0x0000
+#endif
 
 #ifndef RED
 #define RED     0xF800
