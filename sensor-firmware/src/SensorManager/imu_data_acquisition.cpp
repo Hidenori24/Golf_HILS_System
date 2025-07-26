@@ -21,6 +21,7 @@ IMUDataAcquisition::IMUDataAcquisition() {
     gyro_offset_x = 0.0;
     gyro_offset_y = 0.0;
     gyro_offset_z = 0.0;
+    display_mode = 0; // 0: 通常表示, 1: スイッチ押下表示
 }
 
 bool IMUDataAcquisition::initialize() {
@@ -69,42 +70,66 @@ void IMUDataAcquisition::calibrateIMU() {
 SwingData IMUDataAcquisition::readSwingData() {
     SwingData data;
 
-
-    float ax, ay, az, gx, gy, gz;
-    M5.Imu.getAccelData(&ax, &ay, &az);
-    M5.Imu.getGyroData(&gx, &gy, &gz);
-
-    data.accel_x = ax - accel_offset_x;
-    data.accel_y = ay - accel_offset_y;
-    data.accel_z = az - accel_offset_z;
-    data.gyro_x = gx - gyro_offset_x;
-    data.gyro_y = gy - gyro_offset_y;
-    data.gyro_z = gz - gyro_offset_z;
-
-    data.timestamp = millis();
-
-    // --- グラフ表示 ---
-    static int x = 0;
-    int y0 = 40, y_scale = 20;
-    if (x == 0) {
-        M5.Lcd.fillRect(0, y0 - 30, 240, 60, BLACK);
+    // スイッチ押下検知（Aボタン）
+    M5.update();
+    if (M5.BtnA.wasPressed()) {
+        display_mode = (display_mode + 1) % 2; // 0と1を切り替え
+        M5.Lcd.fillScreen(BLACK);
     }
-    int ax_y = y0 - (int)(data.accel_x * y_scale);
-    int ay_y = y0 - (int)(data.accel_y * y_scale);
-    int az_y = y0 - (int)(data.accel_z * y_scale);
-    if (ax_y < 0) ax_y = 0; if (ax_y > 79) ax_y = 79;
-    if (ay_y < 0) ay_y = 0; if (ay_y > 79) ay_y = 79;
-    if (az_y < 0) az_y = 0; if (az_y > 79) az_y = 79;
 
-    M5.Lcd.drawPixel(x, ax_y, RED);
-    M5.Lcd.drawPixel(x, ay_y, GREEN);
-    M5.Lcd.drawPixel(x, az_y, BLUE);
+    if (display_mode == 0) {
+        float ax, ay, az, gx, gy, gz;
+        M5.Imu.getAccelData(&ax, &ay, &az);
+        M5.Imu.getGyroData(&gx, &gy, &gz);
 
-    x++;
-    if (x >= 240) x = 0;
+        data.accel_x = ax - accel_offset_x;
+        data.accel_y = ay - accel_offset_y;
+        data.accel_z = az - accel_offset_z;
+        data.gyro_x = gx - gyro_offset_x;
+        data.gyro_y = gy - gyro_offset_y;
+        data.gyro_z = gz - gyro_offset_z;
 
-    M5.Lcd.setCursor(0, 0);
-    M5.Lcd.printf("ax:%.2f ay:%.2f az:%.2f", data.accel_x, data.accel_y, data.accel_z);
+        data.timestamp = millis();
+
+        // --- グラフ表示 ---
+        static int x = 0;
+        int y0 = 40, y_scale = 20;
+        if (x == 0) {
+            M5.Lcd.fillRect(0, y0 - 30, 240, 60, BLACK);
+        }
+        int ax_y = y0 - (int)(data.accel_x * y_scale);
+        int ay_y = y0 - (int)(data.accel_y * y_scale);
+        int az_y = y0 - (int)(data.accel_z * y_scale);
+        if (ax_y < 0) ax_y = 0; if (ax_y > 79) ax_y = 79;
+        if (ay_y < 0) ay_y = 0; if (ay_y > 79) ay_y = 79;
+        if (az_y < 0) az_y = 0; if (az_y > 79) az_y = 79;
+
+        M5.Lcd.drawPixel(x, ax_y, RED);
+        M5.Lcd.drawPixel(x, ay_y, GREEN);
+        M5.Lcd.drawPixel(x, az_y, BLUE);
+
+        x++;
+        if (x >= 240) x = 0;
+
+        M5.Lcd.setCursor(0, 0);
+        M5.Lcd.printf("ax:%.2f ay:%.2f az:%.2f", data.accel_x, data.accel_y, data.accel_z);
+    } else {
+        // スイッチ押下時の画面
+        M5.Lcd.setCursor(40, 30);
+        M5.Lcd.setTextSize(2);
+        M5.Lcd.setTextColor(YELLOW, BLACK);
+        M5.Lcd.printf("Switch Pressed!");
+        M5.Lcd.setTextSize(1);
+        M5.Lcd.setTextColor(WHITE, BLACK);
+        // データは0で返す
+        data.accel_x = 0;
+        data.accel_y = 0;
+        data.accel_z = 0;
+        data.gyro_x = 0;
+        data.gyro_y = 0;
+        data.gyro_z = 0;
+        data.timestamp = millis();
+    }
 
     return data;
 }
